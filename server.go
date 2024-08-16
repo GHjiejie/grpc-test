@@ -5,35 +5,37 @@ import (
 	"log"
 	"net"
 
-	pb "github.com/GHjiejie/grpc-test/user" // 替换为实际路径
+	pb "github.com/GHjiejie/grpc-test/user" // 导入生成的用户包
 	"google.golang.org/grpc"
 )
 
-// server 结构体实现了 UserServiceServer 接口
+// server 结构体实现 UserServiceServer 接口
 type server struct {
 	pb.UnimplementedUserServiceServer
 }
 
-// GetUser 实现 GetUser 方法
+// GetUser 方法的实现
 func (s *server) GetUser(ctx context.Context, req *pb.GetUserRequest) (*pb.GetUserResponse, error) {
-	// 示例：根据请求 ID 返回用户信息
+	// 模拟获取用户信息，这里硬编码一个用户
 	return &pb.GetUserResponse{
 		Id:   req.Id,
-		Name: "Dummy User", // 这里可以替换为真实逻辑
+		Name: "John Doe", // 假设返回用户名称
 	}, nil
 }
 
 func main() {
+	// 创建一个 TCP 监听器
 	lis, err := net.Listen("tcp", ":50051")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
-	s := grpc.NewServer()
-	pb.RegisterUserServiceServer(s, &server{})
+	// 创建 gRPC 服务器
+	grpcServer := grpc.NewServer()
+	pb.RegisterUserServiceServer(grpcServer, &server{}) // 注册服务
 
 	log.Println("Server is running on port :50051")
-	if err := s.Serve(lis); err != nil {
+	if err := grpcServer.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}
 }

@@ -5,12 +5,13 @@ import (
 	"log"
 	"time"
 
-	pb "github.com/GHjiejie/grpc-test/user" // 替换为实际路径
+	pb "github.com/GHjiejie/grpc-test/user" // 导入生成的用户包
 	"google.golang.org/grpc"
 )
 
 func main() {
-	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure())
+	// 建立与 gRPC 服务器的连接
+	conn, err := grpc.Dial("localhost:50051", grpc.WithInsecure(), grpc.WithBlock(), grpc.WithTimeout(5*time.Second))
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}
@@ -18,14 +19,9 @@ func main() {
 
 	client := pb.NewUserServiceClient(conn)
 
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-	defer cancel()
-
 	// 创建请求
 	req := &pb.GetUserRequest{Id: "123"}
-
-	// 调用 GetUser 方法
-	res, err := client.GetUser(ctx, req)
+	res, err := client.GetUser(context.Background(), req)
 	if err != nil {
 		log.Fatalf("could not get user: %v", err)
 	}
