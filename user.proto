@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package user;
+
+option go_package = "github.com/GHjiejie/grpc-test/user;user";
+
+// Define the User service
+service UserService {
+    rpc GetUser (GetUserRequest) returns (GetUserResponse);
+}
+
+// Request message for GetUser
+message GetUserRequest {
+    string id = 1;
+}
+
+// Response message for GetUser
+message GetUserResponse {
+    string id = 1;
+    string name = 2;
+}
