@@ -1,21 +1,51 @@
 syntax = "proto3";
 
+// Define the user package
 package user;
 
-option go_package = "github.com/GHjiejie/grpc-test/user";
+import "google/api/annotations.proto";
+
+option go_package = "repository/userpb";
 
 // Define the User service
 service UserService {
-    rpc GetUser (GetUserRequest) returns (GetUserResponse);
+    // 用户注册
+    rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse) {
+        option (google.api.http) = {
+            post: "/v1/user/register"
+            body: "*"
+        };
+    }
+    // 用户登录
+    rpc LoginUser(LoginUserRequest) returns (LoginUserResponse) {
+        option (google.api.http) = {
+            post: "/v1/user/login"
+            body: "*"
+        };
+    }
 }
 
-// Request message for GetUser
-message GetUserRequest {
-    string id = 1;
+// Define the request message
+message RegisterUserRequest {
+    string username = 1;
+    string password = 2;
 }
 
-// Response message for GetUser
-message GetUserResponse {
+// Define the response message
+
+message RegisterUserResponse {
     string id = 1;
-    string name = 2;
+    string username = 2;
+}
+
+// Define the request message
+message LoginUserRequest {
+    string username = 1;
+    string password = 2;
+}
+
+// Define the response message
+message LoginUserResponse {
+    string id = 1;
+    string username = 2;
 }
